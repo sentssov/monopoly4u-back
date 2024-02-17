@@ -1,15 +1,17 @@
 package router
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type SignUpRequest struct {
-	Username string `json:"username"`
+	Nickname string `json:"nickname"`
 	Password string `json:"password"`
 }
 
 func SignUp(wr http.ResponseWriter, req *http.Request) {
-	_, err := wr.Write([]byte("This is sign up endpoint!"))
+	_, err := wr.Write([]byte("Hello from sign-up endpoint!"))
 	if err != nil {
-		return
+		wr.WriteHeader(http.StatusInternalServerError)
 	}
 }

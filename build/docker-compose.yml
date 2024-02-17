@@ -1,13 +1,81 @@
 version: '3.8'
 
 services: 
-  web:  
+  app:
+    container_name: app_container
     build: 
       context: ..
       dockerfile: build/Dockerfile
-    container_name: web
-    ports:
-      - "8080:8080"
     volumes:
       - ../.:/usr/src/app
+    ports:
+      - "8080:8080"
     command: go run cmd/app/main.go
+  postgres:
+    container_name: postgres_container
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "app-db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - ../migrations:/docker-entrypoint-initdb.d
+      - ./pg-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d web-db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources: 
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - postgres
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4:7.2
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "alexander.sentsov03@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "pgadmin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - ./pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources: 
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - postgres
+  postgres_exporter:
+    container_name: exporter_container
+    image: prometheuscommunity/postgres-exporter:v0.10.1
+    environment:
+      DATA_SOURCE_URI: "postgres:5432/app-db?sslmode=disable"
+      DATA_SOURCE_USER: "postgres"
+      DATA_SOURCE_PASS: "postgres"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/etc/postgres_exporter/queries.yaml"
+    volumes:
+      - ./queries.yaml:/etc/postgres_exporter/queries.yaml:ro
+    ports:
+      - "9187:9187"
+    restart: unless-stopped
+    deploy:
+      resources: 
+        limits:
+          cpus: '0.2'
+          memory: 500M
+    networks:
+      - postgres
+networks:
+  postgres:
+    driver: bridge

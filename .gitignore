@@ -1,1 +1,5 @@
-.idea
+.idea/
+
+build/pg-data/
+build/pgadmin-data/
+build/queries.yaml/

@@ -13,14 +13,14 @@ import (
 
 func main() {
 	if err := initConfig(); err != nil {
-		log.Fatal("Ошибка инициализации конфигурационного файла: ", err.Error())
+		log.Fatalf("Ошибка инициализации конфигурационного файла: %s", err.Error())
 	}
 	srv := monopoly_auth.NewServer()
 	go func() {
 		host := viper.GetString("server.host")
 		port := viper.GetString("server.port")
 		if err := srv.Run(host, port, router.NewRouter()); err != nil {
-			log.Fatal("Ошибка запуска HTTP-сервера: ", err.Error())
+			log.Fatalf("Ошибка запуска HTTP-сервера: %s", err.Error())
 		}
 	}()
 
@@ -29,7 +29,7 @@ func main() {
 	<-quit
 
 	if err := srv.Shutdown(context.Background()); err != nil {
-		log.Fatal("Ошибка выключения сервера: ", err.Error())
+		log.Fatalf("Ошибка выключения сервера: %s", err.Error())
 	}
 }
 
