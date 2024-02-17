@@ -1,0 +1,13 @@
+version: '3.8'
+
+services: 
+  web:  
+    build: 
+      context: ..
+      dockerfile: build/Dockerfile
+    container_name: web
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../.:/usr/src/app
+    command: go run cmd/app/main.go
