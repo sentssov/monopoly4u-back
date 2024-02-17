@@ -1,6 +1,11 @@
 package router
 
-import "net/http"
+import (
+	"encoding/json"
+	"log"
+	"monopoly-auth/internal"
+	"net/http"
+)
 
 type SignInRequest struct {
 	Username string `json:"username"`
@@ -8,8 +13,21 @@ type SignInRequest struct {
 }
 
 func SignIn(wr http.ResponseWriter, req *http.Request) {
-	_, err := wr.Write([]byte("This is sign-in endpoint!"))
+	var sReq SignInRequest
+	if err := json.NewDecoder(req.Body).Decode(&sReq); err != nil {
+		wr.WriteHeader(http.StatusInternalServerError)
+		log.Println("The request body cannot be readed: ", err.Error())
+	}
+
+	players = append(players, internal.Player{
+		Nickname: sReq.Username,
+		Password: sReq.Password,
+	})
+	pJson, _ := json.Marshal(players)
+
+	wr.Header().Add("Content-Type", "application/json")
+	_, err := wr.Write(pJson)
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 }
