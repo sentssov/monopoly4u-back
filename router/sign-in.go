@@ -1,17 +1,43 @@
 package router
 
 import (
+	"encoding/json"
+	"io"
+	"monopoly-auth/tools"
 	"net/http"
 )
 
 type SignInRequest struct {
-	Nickname string `json:"nickname"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 func SignIn(wr http.ResponseWriter, req *http.Request) {
-	_, err := wr.Write([]byte("Hello from sign-in endpoint!"))
-	if err != nil {
-		wr.WriteHeader(http.StatusInternalServerError)
+	sReq := SignInRequest{}
+	if err := json.NewDecoder(req.Body).Decode(&sReq); err != nil {
+		Logger.Errorf("sign-in: json decode error: %s", err.Error())
+		return
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			Logger.Errorf("sign-in: close body error: %s", err.Error())
+			return
+		}
+	}(req.Body)
+
+	for _, player := range Players {
+		if player.Email == sReq.Email {
+			hashed, err := tools.HashPassword(sReq.Password)
+			if err != nil {
+				Logger.Errorf("sign-in: hash password error: %s", err.Error())
+			}
+			if tools.CompareHash(player.PasswordHash, hashed) {
+				wr.WriteHeader(http.StatusUnauthorized)
+				return
+			} else {
+				wr.WriteHeader(http.StatusOK)
+			}
+		}
 	}
 }

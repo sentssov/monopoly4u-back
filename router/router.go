@@ -2,8 +2,13 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/sirupsen/logrus"
+	"monopoly-auth/internal"
 	"monopoly-auth/router/middleware"
 )
+
+var Logger logrus.Logger
+var Players []internal.Player
 
 func NewRouter() *chi.Mux {
 	r := chi.NewRouter()

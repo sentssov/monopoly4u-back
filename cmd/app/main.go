@@ -29,7 +29,7 @@ func main() {
 	go func() {
 		host := viper.GetString("server.host")
 		port := viper.GetString("server.port")
-		if err := srv.Run(host, port, router.NewRouter()); err != nil {
+		if err = srv.Run(host, port, router.NewRouter()); err != nil {
 			logger.Errorf("Error of starting the HTTP server: %s", err.Error())
 		}
 	}()
@@ -38,7 +38,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	if err := srv.Shutdown(context.Background()); err != nil {
+	if err = srv.Shutdown(context.Background()); err != nil {
 		logger.Errorf("Error of shuting down the HTTP server: %s", err.Error())
 	}
 }
@@ -57,7 +57,7 @@ func initLogger() (*logrus.Logger, error) {
 }
 
 func initConfig() error {
-	viper.AddConfigPath("../../configs")
+	viper.AddConfigPath("configs")
 	viper.SetConfigName("default")
 	return viper.ReadInConfig()
 }
