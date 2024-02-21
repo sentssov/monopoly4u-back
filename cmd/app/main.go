@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"log"
-	"monopoly-auth"
+	"monopoly-auth/internal/storage"
 	"monopoly-auth/router"
 	"monopoly-auth/router/middleware"
 	"os"
@@ -25,7 +25,21 @@ func main() {
 
 	middleware.Logger = logger
 
-	srv := monopoly_auth.NewServer(logger)
+	_, err = storage.NewPostgresDB(
+		storage.DBConfig{
+			Host:     viper.GetString("database.host"),
+			Port:     viper.GetString("database.port"),
+			Username: viper.GetString("database.username"),
+			Password: viper.GetString("database.password"),
+			DBName:   viper.GetString("database.dbname"),
+			SSLMode:  viper.GetString("database.sslmode"),
+		})
+
+	if err != nil {
+		logger.Errorf("Error of initialization storage: %s", err.Error())
+	}
+
+	srv := router.NewServer(logger)
 	go func() {
 		host := viper.GetString("server.host")
 		port := viper.GetString("server.port")

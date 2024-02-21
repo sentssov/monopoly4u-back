@@ -1,4 +1,4 @@
-package monopoly_auth
+package router
 
 import (
 	"context"

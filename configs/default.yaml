@@ -1,9 +1,11 @@
 server:
   host: ""
   port: 8080
-db:
+  
+database:
   host: ""
   port: 5432
-  user: "postgres"
+  username: "postgres"
   password: "postgres"
   dbname: "app-db"
+  sslmode: "disable"
