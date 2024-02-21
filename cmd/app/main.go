@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"log"
+	"monopoly-auth/configs"
 	"monopoly-auth/internal/storage"
 	"monopoly-auth/router"
 	"monopoly-auth/router/middleware"
@@ -19,7 +19,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error of initialization logger: %s", err.Error())
 	}
-	if err := initConfig(); err != nil {
+	cfg, err := configs.InitConfig()
+	if err != nil {
 		logger.Errorf("Error of initialization config file: %s", err.Error())
 	}
 
@@ -27,12 +28,12 @@ func main() {
 
 	_, err = storage.NewPostgresDB(
 		storage.DBConfig{
-			Host:     viper.GetString("database.host"),
-			Port:     viper.GetString("database.port"),
-			Username: viper.GetString("database.username"),
-			Password: viper.GetString("database.password"),
-			DBName:   viper.GetString("database.dbname"),
-			SSLMode:  viper.GetString("database.sslmode"),
+			Host:     cfg.Database.Host,
+			Port:     cfg.Database.Port,
+			Username: cfg.Database.Username,
+			Password: cfg.Database.Password,
+			DBName:   cfg.Database.DBName,
+			SSLMode:  cfg.Database.SSLMode,
 		})
 
 	if err != nil {
@@ -41,8 +42,8 @@ func main() {
 
 	srv := router.NewServer(logger)
 	go func() {
-		host := viper.GetString("server.host")
-		port := viper.GetString("server.port")
+		host := cfg.Server.Host
+		port := cfg.Server.Port
 		if err = srv.Run(host, port, router.NewRouter()); err != nil {
 			logger.Errorf("Error of starting the HTTP server: %s", err.Error())
 		}
@@ -68,10 +69,4 @@ func initLogger() (*logrus.Logger, error) {
 			ForceFormatting: true,
 		},
 	}, nil
-}
-
-func initConfig() error {
-	viper.AddConfigPath("configs")
-	viper.SetConfigName("default")
-	return viper.ReadInConfig()
 }

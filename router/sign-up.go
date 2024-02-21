@@ -8,12 +8,6 @@ import (
 	"net/http"
 )
 
-type SignUpRequest struct {
-	Email    string `json:"email"`
-	Nickname string `json:"nickname"`
-	Password string `json:"password"`
-}
-
 func SignUp(wr http.ResponseWriter, req *http.Request) {
 	sReq := SignUpRequest{}
 	if err := json.NewDecoder(req.Body).Decode(&sReq); err != nil {

@@ -7,11 +7,6 @@ import (
 	"net/http"
 )
 
-type SignInRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func SignIn(wr http.ResponseWriter, req *http.Request) {
 	sReq := SignInRequest{}
 	if err := json.NewDecoder(req.Body).Decode(&sReq); err != nil {

@@ -9,3 +9,13 @@ database:
   password: "postgres"
   dbname: "app-db"
   sslmode: "disable"
+  
+oauth:
+  frontend-origin: http://localhost:5173/
+  jwt-secret: super-secret
+  token-expired-in: 60m
+  token-max-age: 60
+    
+  google-client-id: google-client-id
+  google-client-secret: google-client-secret
+  google-redirect-uri: http://localhost:8080/api/sessions/oauth/google
