@@ -22,7 +22,7 @@ func SignIn(wr http.ResponseWriter, req *http.Request) {
 	}(req.Body)
 
 	for _, player := range Players {
-		if player.Email == sReq.Email {
+		if player.Email.String() == sReq.Email {
 			hashed, err := tools.HashPassword(sReq.Password)
 			if err != nil {
 				Logger.Errorf("sign-in: hash password error: %s", err.Error())
