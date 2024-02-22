@@ -2,8 +2,7 @@ package storage
 
 import (
 	"fmt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
 type DBConfig struct {
@@ -15,12 +14,22 @@ type DBConfig struct {
 	SSLMode  string
 }
 
-func NewPostgresDB(cfg DBConfig) (*gorm.DB, error) {
+var (
+	DriverName = "postgres"
+)
+
+func NewPostgresDB(cfg DBConfig) (*sqlx.DB, error) {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.Username, cfg.Password, cfg.DBName, cfg.SSLMode)
 
-	return gorm.Open(postgres.New(postgres.Config{
-		DSN:                  dsn,
-		PreferSimpleProtocol: true,
-	}))
+	db, err := sqlx.Open(DriverName, dsn)
+	if err != nil {
+		return nil, err
+	}
+	err = db.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }

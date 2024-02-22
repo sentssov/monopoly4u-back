@@ -2,7 +2,6 @@ package router
 
 import (
 	"encoding/json"
-	"golang.org/x/crypto/bcrypt"
 	"io"
 	"monopoly-auth/internal"
 	"net/http"
@@ -21,16 +20,17 @@ func SignUp(wr http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}(req.Body)
-	hash, err := bcrypt.GenerateFromPassword([]byte(sReq.Password), bcrypt.MinCost)
+
+	mng := internal.NewPlayerManager()
+
+	player, err := mng.CreatePlayer(sReq.Email, sReq.Nickname, sReq.Password)
 	if err != nil {
-		Logger.Errorf("sign-up hash generation error: %s", err.Error())
+		Logger.Errorf("sign-up player creation error: %s", err.Error())
+		http.Error(wr, err.Error(), http.StatusBadRequest)
 		return
 	}
-	Players = append(Players, internal.Player{
-		Email:        sReq.Email,
-		Nickname:     sReq.Nickname,
-		PasswordHash: hash,
-	})
+
+	Players = append(Players, player)
 
 	wr.WriteHeader(http.StatusCreated)
 }

@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
-	"log"
 	"monopoly-auth/configs"
 	"monopoly-auth/internal/storage"
+	"monopoly-auth/pkg/logging"
 	"monopoly-auth/router"
 	"monopoly-auth/router/middleware"
 	"os"
@@ -15,10 +13,7 @@ import (
 )
 
 func main() {
-	logger, err := initLogger()
-	if err != nil {
-		log.Fatalf("Error of initialization logger: %s", err.Error())
-	}
+	logger := logging.InitLogger()
 	cfg, err := configs.InitConfig()
 	if err != nil {
 		logger.Errorf("Error of initialization config file: %s", err.Error())
@@ -56,17 +51,4 @@ func main() {
 	if err = srv.Shutdown(context.Background()); err != nil {
 		logger.Errorf("Error of shuting down the HTTP server: %s", err.Error())
 	}
-}
-
-func initLogger() (*logrus.Logger, error) {
-	return &logrus.Logger{
-		Out:   os.Stderr,
-		Level: logrus.DebugLevel,
-		Formatter: &prefixed.TextFormatter{
-			DisableColors:   false,
-			TimestampFormat: "2006-01-02 15:04:05",
-			FullTimestamp:   true,
-			ForceFormatting: true,
-		},
-	}, nil
 }

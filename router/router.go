@@ -8,7 +8,7 @@ import (
 )
 
 var Logger logrus.Logger
-var Players []internal.Player
+var Players []*internal.Player
 
 func NewRouter() *chi.Mux {
 	r := chi.NewRouter()
