@@ -35,11 +35,13 @@ func main() {
 		logger.Errorf("Error of initialization storage: %s", err.Error())
 	}
 
+	h := router.NewHandler(logger)
+
 	srv := router.NewServer(logger)
 	go func() {
 		host := cfg.Server.Host
 		port := cfg.Server.Port
-		if err = srv.Run(host, port, router.NewRouter()); err != nil {
+		if err = srv.Run(host, port, h.InitRoutes()); err != nil {
 			logger.Errorf("Error of starting the HTTP server: %s", err.Error())
 		}
 	}()
