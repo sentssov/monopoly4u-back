@@ -6,7 +6,6 @@ import (
 	"monopoly-auth/internal/storage"
 	"monopoly-auth/pkg/logging"
 	"monopoly-auth/router"
-	"monopoly-auth/router/middleware"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,8 +17,6 @@ func main() {
 	if err != nil {
 		logger.Errorf("Error of initialization config file: %s", err.Error())
 	}
-
-	middleware.Logger = logger
 
 	_, err = storage.NewPostgresDB(
 		storage.DBConfig{
