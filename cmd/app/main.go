@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/joho/godotenv"
 	"monopoly-auth/configs"
 	"monopoly-auth/internal/storage"
 	"monopoly-auth/pkg/logging"
@@ -18,14 +19,19 @@ func main() {
 		logger.Errorf("Error of initialization config file: %s", err.Error())
 	}
 
+	if err = godotenv.Load(); err != nil {
+		logger.Errorf("Error of loading the .env file: %s", err.Error())
+		return
+	}
+
 	_, err = storage.NewPostgresDB(
 		storage.DBConfig{
 			Host:     cfg.Database.Host,
 			Port:     cfg.Database.Port,
 			Username: cfg.Database.Username,
-			Password: cfg.Database.Password,
 			DBName:   cfg.Database.DBName,
 			SSLMode:  cfg.Database.SSLMode,
+			Password: os.Getenv("POSTGRES_APP_DB_PASSWORD"),
 		})
 
 	if err != nil {

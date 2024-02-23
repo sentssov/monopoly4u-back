@@ -1,6 +1,8 @@
 package configs
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	Server struct {
@@ -15,20 +17,23 @@ type Config struct {
 		DBName   string `mapstructure:"dbname"`
 		SSLMode  string `mapstructure:"sslmode"`
 	}
-	OAuth struct {
-		FrontendOriginURI string `mapstructure:"frontend-origin-uri"`
-		JWTSecret         string `mapstructure:"jwt-secret"`
-		TokenExpriredIn   string `mapstructure:"token-exprired-in"`
-		TokenMaxAge       string `mapstructure:"token-max-age"`
-
-		GoogleClientID     string `mapstructure:"google-client-id"`
-		GoogleClientSecret string `mapstructure:"google-client-secret"`
-		GoogleRedirectURI  string `mapstructure:"google-redirect-uri"`
-	}
 }
 
+//type EnvConfig struct {
+//	PostgresAppDbPassword string `mapstructure:"POSTGRES_APP_DB_PASSWORD"`
+//
+//	FrontendOriginURI string `mapstructure:"FRONTEND_ORIGIN"`
+//	JWTSecret         string `mapstructure:"JWT_SECRET"`
+//	TokenExpriredIn   string `mapstructure:"TOKEN_EXPIRED_IN"`
+//	TokenMaxAge       string `mapstructure:"TOKEN_MAX_AGE"`
+//
+//	GoogleClientID     string `mapstructure:"GOOGLE_OAUTH_CLIENT_ID"`
+//	GoogleClientSecret string `mapstructure:"GOOGLE_OAUTH_CLIENT_SECRET"`
+//	GoogleRedirectURI  string `mapstructure:"GOOGLE_OAUTH_REDIRECT_URI"`
+//}
+
 func InitConfig() (config *Config, err error) {
-	viper.AddConfigPath("../../configs")
+	viper.AddConfigPath("configs")
 	viper.SetConfigName("default")
 	viper.SetConfigType("yaml")
 
