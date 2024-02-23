@@ -4,10 +4,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/sirupsen/logrus"
+	"monopoly-auth/internal"
 )
 
 type Handler struct {
-	logger *logrus.Logger
+	manager *internal.PlayerManager
+	logger  *logrus.Logger
 }
 
 func (h *Handler) InitRoutes() *chi.Mux {
@@ -24,6 +26,9 @@ func (h *Handler) InitRoutes() *chi.Mux {
 	return r
 }
 
-func NewHandler(logger *logrus.Logger) *Handler {
-	return &Handler{logger}
+func NewHandler(manager *internal.PlayerManager, logger *logrus.Logger) *Handler {
+	return &Handler{
+		manager: manager,
+		logger:  logger,
+	}
 }

@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS players
 (
-    id            SERIAL PRIMARY KEY
-    email         VARCHAR(255) UNIQUE
-    nickname      VARCHAR(255) UNIQUE
-    password_hash VARCHAR(255)
+    id            VARCHAR(255) PRIMARY KEY,
+    email         VARCHAR(255) UNIQUE,
+    nickname      VARCHAR(255) UNIQUE,
+    password_hash VARCHAR(255),
+    created_at    DATE,
+    updated_at    DATE
 );
-
-CREATE INDEX IF NOT EXISTS idx_players_email ON players;

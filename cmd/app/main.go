@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/joho/godotenv"
 	"monopoly-auth/configs"
+	"monopoly-auth/internal"
 	"monopoly-auth/internal/storage"
 	"monopoly-auth/pkg/logging"
 	"monopoly-auth/router"
@@ -24,7 +25,7 @@ func main() {
 		return
 	}
 
-	_, err = storage.NewPostgresDB(
+	db, err := storage.NewPostgresDB(
 		storage.DBConfig{
 			Host:     cfg.Database.Host,
 			Port:     cfg.Database.Port,
@@ -38,7 +39,8 @@ func main() {
 		logger.Errorf("Error of initialization storage: %s", err.Error())
 	}
 
-	h := router.NewHandler(logger)
+	m := internal.NewPlayerManager(db)
+	h := router.NewHandler(m, logger)
 
 	srv := router.NewServer(logger)
 	go func() {
