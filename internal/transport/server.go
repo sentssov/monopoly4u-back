@@ -1,15 +1,13 @@
-package router
+package transport
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 )
 
 type Server struct {
 	httpServer *http.Server
-	logger     *logrus.Logger
 }
 
 func (s *Server) Run(addr string, port string, handler http.Handler) error {
@@ -28,8 +26,6 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	return s.httpServer.Shutdown(ctx)
 }
 
-func NewServer(logger *logrus.Logger) *Server {
-	return &Server{
-		logger: logger,
-	}
+func NewServer() *Server {
+	return &Server{}
 }

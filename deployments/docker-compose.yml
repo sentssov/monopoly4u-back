@@ -5,7 +5,7 @@ services:
     container_name: app_container
     build: 
       context: ..
-      dockerfile: build/Dockerfile
+      dockerfile: ../build/Dockerfile
     volumes:
       - ../.:/usr/src/app
     ports:
